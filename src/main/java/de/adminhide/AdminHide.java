@@ -1,6 +1,6 @@
 package de.adminhide;
 
-import io.papermc.paper.event.server.ServerListPingEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
