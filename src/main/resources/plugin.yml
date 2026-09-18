@@ -1,0 +1,19 @@
+name: AdminHide
+version: 1.0
+main: de.adminhide.AdminHide
+api-version: '1.13'
+description: Admins koennen sich mit /hide komplett verstecken
+author: joniiasd201
+
+commands:
+  hide:
+    description: Verstecke dich komplett
+    usage: /hide [list]
+
+permissions:
+  adminhide.use:
+    description: Nutzung von /hide
+    default: op
+  adminhide.see:
+    description: Versteckte Spieler trotzdem sehen
+    default: op
