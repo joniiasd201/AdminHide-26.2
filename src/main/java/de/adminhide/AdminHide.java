@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -87,6 +88,7 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
             applyHiddenState(player);
             player.sendMessage(ChatColor.GREEN + "Du bist jetzt komplett versteckt!");
             player.sendMessage(ChatColor.GRAY + "Unsichtbar in der Welt und Tab-Liste.");
+            player.sendMessage(ChatColor.GRAY + "Du kannst im Hide-Modus keine Bloecke abbauen.");
             sendFakeMessage(player, ChatColor.YELLOW + player.getName() + " hat den Server verlassen");
         }
         return true;
@@ -150,6 +152,13 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
     public void onQuit(PlayerQuitEvent event) {
         if (hidden.contains(event.getPlayer().getUniqueId())) {
             event.setQuitMessage(null);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (hidden.contains(event.getPlayer().getUniqueId())) {
+            event.setCancelled(true);
         }
     }
 
