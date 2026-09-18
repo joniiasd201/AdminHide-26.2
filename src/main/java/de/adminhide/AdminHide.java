@@ -1,5 +1,6 @@
 package de.adminhide;
 
+import io.papermc.paper.event.server.ServerListPingEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,20 +13,18 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @SuppressWarnings("deprecation")
 public final class AdminHide extends JavaPlugin implements Listener, CommandExecutor {
 
-    private final Set<UUID> hidden = new HashSet<>();
+    private final Set<UUID> hidden = new CopyOnWriteArraySet<>();
 
     @Override
     public void onEnable() {
@@ -140,6 +139,7 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
         }
     }
 
+    // Serverliste: Spielerzahl korrigieren + Namen aus der Hover-Vorschau entfernen
     @EventHandler
     public void onPing(ServerListPingEvent event) {
         int hiddenOnline = 0;
@@ -149,13 +149,8 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
         if (hiddenOnline > 0) {
             event.setNumPlayers(Math.max(0, event.getNumPlayers() - hiddenOnline));
         }
-        try {
-            Iterator<Player> it = event.iterator();
-            while (it.hasNext()) {
-                if (hidden.contains(it.next().getUniqueId())) it.remove();
-            }
-        } catch (UnsupportedOperationException ignored) {
-        }
+        event.getPlayerSample().removeIf(profile ->
+                profile.getId() != null && hidden.contains(profile.getId()));
     }
 
     @EventHandler(ignoreCancelled = true)
