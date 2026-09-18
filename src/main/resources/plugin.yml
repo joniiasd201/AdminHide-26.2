@@ -1,7 +1,7 @@
 name: AdminHide
-version: 1.0
+version: 26.2
 main: de.adminhide.AdminHide
-api-version: '1.13'
+api-version: '1.20'
 description: Admins koennen sich mit /hide komplett verstecken
 author: joniiasd201
 

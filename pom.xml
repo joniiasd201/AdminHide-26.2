@@ -6,26 +6,27 @@
 
     <groupId>de.adminhide</groupId>
     <artifactId>AdminHide</artifactId>
-    <version>1.0</version>
+    <version>26.2</version>
     <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spigot.version>1.20.4-R0.1-SNAPSHOT</spigot.version>
     </properties>
 
     <repositories>
         <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>spigotmc-releases</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -20,24 +20,35 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@SuppressWarnings("deprecation")
 public final class AdminHide extends JavaPlugin implements Listener, CommandExecutor {
 
     private final Set<UUID> hidden = new CopyOnWriteArraySet<>();
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        loadHidden();
+
+        if (getCommand("hide") == null) {
+            getLogger().severe("Der Befehl 'hide' ist nicht in plugin.yml definiert.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        getCommand("hide").setExecutor(this);
+        Bukkit.getPluginManager().registerEvents(this, this);
+        getLogger().info("AdminHide 26.2 aktiviert (Paper/Spigot kompatibel).");
+    }
+
+    private void loadHidden() {
         hidden.clear();
         for (String id : getConfig().getStringList("hidden")) {
             try {
                 hidden.add(UUID.fromString(id));
             } catch (IllegalArgumentException ignored) {
+                getLogger().warning("Ungueltige UUID in der Konfiguration: " + id);
             }
         }
-
-        getCommand("hide").setExecutor(this);
-        Bukkit.getPluginManager().registerEvents(this, this);
-        getLogger().info("AdminHide aktiviert!");
     }
 
     @Override
@@ -54,7 +65,9 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
         if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
             List<String> names = new ArrayList<>();
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (hidden.contains(p.getUniqueId())) names.add(p.getName());
+                if (hidden.contains(p.getUniqueId())) {
+                    names.add(p.getName());
+                }
             }
             player.sendMessage(ChatColor.GOLD + "Versteckte Spieler: "
                     + (names.isEmpty() ? ChatColor.GRAY + "keine"
@@ -81,9 +94,9 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
 
     private void applyHiddenState(Player target) {
         for (Player online : Bukkit.getOnlinePlayers()) {
-            if (online.equals(target)) continue;
-            if (online.hasPermission("adminhide.see")) continue;
-            online.hidePlayer(this, target);
+            if (!online.equals(target) && !online.hasPermission("adminhide.see")) {
+                online.hidePlayer(this, target);
+            }
         }
     }
 
@@ -103,7 +116,9 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
 
     private void saveHidden() {
         List<String> ids = new ArrayList<>();
-        for (UUID id : hidden) ids.add(id.toString());
+        for (UUID id : hidden) {
+            ids.add(id.toString());
+        }
         getConfig().set("hidden", ids);
         saveConfig();
     }
