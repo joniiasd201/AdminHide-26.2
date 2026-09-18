@@ -38,7 +38,7 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
 
         getCommand("hide").setExecutor(this);
         Bukkit.getPluginManager().registerEvents(this, this);
-        getLogger().info("AdminHide 26.2 aktiviert (Paper/Spigot kompatibel).");
+        getLogger().info("AdminHide aktiviert (Paper/Spigot kompatibel).");
     }
 
     private void loadHidden() {
@@ -129,6 +129,8 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
     public void onJoin(PlayerJoinEvent event) {
         Player joiner = event.getPlayer();
 
+        // A hidden player remains hidden after logging out and back in.
+        // Suppress the normal join message for everyone, including adminhide.see users.
         if (hidden.contains(joiner.getUniqueId())) {
             event.setJoinMessage(null);
             applyHiddenState(joiner);
@@ -150,6 +152,7 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        // Do not announce logout while /hide is active.
         if (hidden.contains(event.getPlayer().getUniqueId())) {
             event.setQuitMessage(null);
         }
