@@ -1,6 +1,5 @@
 package de.adminhide;
 
-import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -74,7 +73,7 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
             saveHidden();
             applyHiddenState(player);
             player.sendMessage(ChatColor.GREEN + "Du bist jetzt komplett versteckt!");
-            player.sendMessage(ChatColor.GRAY + "Unsichtbar in der Welt, Tab-Liste und Serverliste.");
+            player.sendMessage(ChatColor.GRAY + "Unsichtbar in der Welt und Tab-Liste.");
             sendFakeMessage(player, ChatColor.YELLOW + player.getName() + " hat den Server verlassen");
         }
         return true;
@@ -137,20 +136,6 @@ public final class AdminHide extends JavaPlugin implements Listener, CommandExec
         if (hidden.contains(event.getPlayer().getUniqueId())) {
             event.setQuitMessage(null);
         }
-    }
-
-    // Serverliste: Spielerzahl korrigieren + Namen aus der Hover-Vorschau entfernen
-    @EventHandler
-    public void onPing(ServerListPingEvent event) {
-        int hiddenOnline = 0;
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (hidden.contains(p.getUniqueId())) hiddenOnline++;
-        }
-        if (hiddenOnline > 0) {
-            event.setNumPlayers(Math.max(0, event.getNumPlayers() - hiddenOnline));
-        }
-        event.getPlayerSample().removeIf(profile ->
-                profile.getId() != null && hidden.contains(profile.getId()));
     }
 
     @EventHandler(ignoreCancelled = true)
